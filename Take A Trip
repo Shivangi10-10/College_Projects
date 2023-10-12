@@ -1,0 +1,128 @@
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+// Structure for linked list node
+struct Node {
+    string name;
+    int cost;
+    int time;
+    Node* next;
+};
+
+// Function to insert a new node at the end of the linked list
+Node* insertNode(Node* head, string name, int cost = 10, int time = 5) {
+    Node* newNode = new Node();
+    newNode->name = name;
+    newNode->cost = cost;
+    newNode->time = time;
+    newNode->next = nullptr;
+    if (head == nullptr) {
+        head = newNode;
+    } else {
+        Node* temp = head;
+        while (temp->next != nullptr) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+    return head;
+}
+
+// Function to display the linked list
+void displayList(Node* head) {
+    Node* temp = head;
+    while (temp != nullptr) {
+        cout << temp->name << " (Cost: " << temp->cost << ", Time: " << temp->time << ")" << endl;
+        temp = temp->next;
+    }
+}
+
+// Function to check if the entered destination is valid
+bool isValidDestination(string destination) {
+    string destinations[3] = {"Mathura", "Vridavan", "Agra"};
+    for (int i = 0; i < 3; i++) {
+        if (destinations[i] == destination) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Function to get the linked list for a given destination
+Node* getDestinationList(string destination) {
+    Node* head = nullptr;
+    if (destination == "Mathura") {
+        head = insertNode(head, "Govardhan Hill");
+        head = insertNode(head, "Kusum Sarova");
+        head = insertNode(head, "Krishna Janmasthana Temple");
+        head = insertNode(head, "Shree Dwarkadhish Temple Mathura");
+        head = insertNode(head, "Mathura Museum");
+        head = insertNode(head, "Bhuteshwar Mahadev Mandir");
+        head = insertNode(head, "Vishram Ghat");
+        head = insertNode(head, "Nand Gaon");
+        head = insertNode(head, "Radha Kund");
+        head = insertNode(head, "Kans Qila");
+        head = insertNode(head, "Gita Mandir Mathura");
+    } else if (destination == "Agra") {
+        head = insertNode(head, "Taj Mahal");
+        head = insertNode(head, "Agra Fort");
+        head = insertNode(head, "Fatehpur Sikhri");
+        head = insertNode(head, "Akhbar's Tomb");
+        head = insertNode(head, "Moti Masjid");
+        head = insertNode(head, "Sikandra Fort");
+        head = insertNode(head, "Mehtab bagh");
+    } else if (destination == "Vridavan") {
+        head = insertNode(head, "Prem mandir");
+        head = insertNode(head, "ISckon");
+        head = insertNode(head, "Banke Bihari");
+        head = insertNode(head, "MAta VAishno devi Dham");
+        head = insertNode(head, "Radha Damodar");
+        head = insertNode(head, "govinda Dev Ji");
+        head = insertNode(head, "Akshaya Patra");
+    }
+    return head;
+}
+
+// Function to calculate the minimum
+int calculateMinimum(Node* head, int budget, int time) {
+int dp[time + 1];
+memset(dp, 0, sizeof(dp));
+Node* curr = head;
+while (curr != nullptr) {
+for (int i = time; i >= curr->time; i--) {
+dp[i] = max(dp[i], dp[i - curr->time] + curr->cost);
+}
+curr = curr->next;
+}
+int ans = 0;
+for (int i = 0; i <= time; i++) {
+if (dp[i] <= budget) {
+ans = i;
+}
+}
+return ans;
+}
+
+// Main function
+int main() {
+string destination;
+cout << "Enter your destination (Mathura, Vridavan, Agra): ";
+cin >> destination;
+if (!isValidDestination(destination)) {
+cout << "Invalid destination!" << endl;
+return 0;
+}
+Node* head = getDestinationList(destination);
+int budget, time;
+cout << "Enter your budget (in Rs.): ";
+cin >> budget;
+cout << "Enter the time you have (in hours): ";
+cin >> time;
+cout << endl << "Places you can visit: " << endl;
+displayList(head);
+cout << endl << "Minimum time required to visit all places within budget: " << calculateMinimum(head, budget, time) << " hours" << endl;
+return 0;
+}
