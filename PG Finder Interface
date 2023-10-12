@@ -1,0 +1,469 @@
+  SOURCE CODE
+
+#include <iostream>
+#include <iomanip>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct Node
+{
+    string name;
+    string Type_of_room;
+    int location;
+    int rent;
+    int ratings;
+    int deposits;
+    char gender;
+    Node *next = NULL;
+};
+
+struct Node *head = NULL;
+struct Node *tail = NULL;
+
+void InsertNode(string m, string n, int o, int p, int q, int r, char s)
+{
+    Node *temp = new Node;
+    temp->name = m;
+    temp->Type_of_room = n;
+    temp->location = o;
+    temp->rent = p;
+    temp->ratings = q;
+    temp->deposits = r;
+    temp->gender = s;
+    temp->next = NULL;
+
+    if (head == NULL)
+    {
+        head = temp;
+        tail = temp;
+    }
+    else
+    {
+        tail->next = temp;
+        tail = tail->next;
+    }
+}
+
+void display()
+{
+    Node *temp = head;
+    cout << "PG Name" << setw(25) << "Type of Room" << setw(15) << "Location" << setw(15) << "Rent" << setw(15) << "Rating" << setw(15) << "Deposit" << setw(15) << "Gender" << '\n';
+    while (temp != NULL)
+    {
+        cout << temp->name << setw(20);
+        cout << temp->Type_of_room << setw(18);
+        cout << temp->location << setw(17);
+        cout << temp->rent << setw(12);
+        cout << temp->ratings << setw(17);
+        cout << temp->deposits << setw(12);
+        cout << temp->gender << endl;
+
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+// Function to search PG in particular sector
+void SearchSector(int key)
+{
+    int count = 0;
+    Node *curr = head;
+
+        while (curr != NULL)
+        {
+            if (curr->location == key)
+            {
+                count++;
+                cout << curr->name << setw(20);
+                cout << curr->Type_of_room << setw(18);
+                cout << curr->location << setw(17);
+                cout << curr->rent << setw(12);
+                cout << curr->ratings << setw(17);
+                cout << curr->deposits << setw(12);
+                cout << curr->gender << endl;
+            }
+            curr = curr->next;
+
+    }
+    if (count == 0)
+    {
+        cout << "Oops! There is no PG available in this sector" << endl;
+    }
+}
+
+//price wise filter
+int linear_Search(int key)
+{
+    Node* temp5=head;
+    int count2=0;
+    for(int i=0;i<13;i++)
+    {
+        if(temp5->rent<=key)
+        {
+            count2++;
+            cout << temp5->name << setw(20);
+            cout << temp5->Type_of_room << setw(18);
+            cout << temp5->location << setw(17);
+            cout << temp5->rent << setw(12);
+            cout << temp5->ratings << setw(17);
+            cout << temp5->deposits << setw(12);
+            cout << temp5->gender << endl;
+
+        }
+        temp5=temp5->next;
+    }
+if(count2==0){
+cout<<"PG unavailable with or under this price!"<<endl;
+}
+return -1;
+}
+
+//rating wise filter
+int linear_Search_rating(int key1)
+{
+    Node* temp8=head;
+    int count3=0;
+    for(int i=0;i<13;i++)
+    {
+        if(temp8->ratings==key1)
+        {
+            count3++;
+            cout << temp8->name << setw(20);
+            cout << temp8->Type_of_room << setw(18);
+            cout << temp8->location << setw(17);
+            cout << temp8->rent << setw(12);
+            cout << temp8->ratings << setw(17);
+            cout << temp8->deposits << setw(12);
+            cout << temp8->gender << endl;
+
+        }
+        temp8=temp8->next;
+    }
+if(count3==0){
+cout<<"PG unavailable with this rating!"<<endl;
+}
+return -1;
+}
+struct TrieNode {
+    char data;
+    TrieNode **children;
+    bool isTerminal;
+
+    TrieNode(char data) {
+        this->data = data;
+        children = new TrieNode *[26];
+        for (int i = 0; i < 26; i++) {
+            children[i] = NULL;
+        }
+        isTerminal = false;
+    }
+};
+
+struct Trie {
+    TrieNode *root;
+    int count;
+    Trie() {
+        this->count = 0;
+        root = new TrieNode('\0');
+    }
+
+    bool insertWord(TrieNode *root, string word) {
+        if (word.size() == 0) {
+            if (!root->isTerminal) {
+                root->isTerminal = true;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // Small calculation
+        int index;
+        if (isupper(word[0])) {
+            word[0] = tolower(word[0]);
+        }
+        index = word[0] - 'a';
+        TrieNode *child;
+
+        if (root->children[index] != NULL) {
+            child = root->children[index];
+        } else {
+            child = new TrieNode(word[0]);
+            root->children[index] = child;
+        }
+
+        // Recursive call
+        return insertWord(child, word.substr(1));
+    }
+
+    void insertWord(string word) {
+        if (insertWord(root, word)) {
+            this->count++;
+        }
+    }
+
+    TrieNode *findWord(TrieNode *root, string word)
+    {
+        if (word.size() == 0)
+        {
+            return root;
+        }
+        if (root->children[word[0] - 'a'] == NULL)
+        {
+            cout << root->children[word[0] - 'a'] << endl;
+            return NULL;
+        }
+        return findWord(root->children[word[0] - 'a'], word.substr(1));
+    }
+
+    void printAllPossibleWords(TrieNode *root, string word)
+    {
+        if (root->isTerminal)
+        {
+            cout << word << endl;
+        }
+        for (int i = 0; i < 26; i++)
+        {
+            if (root->children[i] != NULL)
+            {
+                char ch = i + 'a';
+                printAllPossibleWords(root->children[i], word + ch);
+            }
+        }
+    }
+
+    void autoComplete(string* arr, string pattern)
+    {
+        for (int i = 0; i < 14; i++)
+        {
+            insertWord(arr[i]);
+            // cout << arr[i] << " inserted" << endl;
+        }
+        cout << "PG Found:" << endl;
+        TrieNode *base = findWord(root, pattern);
+        if (base == NULL)
+        {
+            cout << "Base NULL" << endl;
+            return;
+        }
+        string word = pattern;
+        printAllPossibleWords(base, word);
+    }
+};
+
+
+int main(void)  {
+       cout << "                   Welcome to PG Finder Interface!" << endl;
+    cout << endl;
+    cout << "             ......Feel like home away from home......" << endl;
+
+    cout << endl;
+    cout << endl;
+    cout << "Press any key to continue and enter" << endl;
+    getchar();
+    system("cls");
+A:
+    cout << "      What are you looking for?" << endl;
+    cout << endl;
+    cout << endl;
+    cout << endl;
+    cout << "1. Display all the PG." << endl;
+    cout << "2. Search PG." << endl;
+    cout << "3. Filters." << endl;
+    cout << "4. Exit" << endl;
+    cout << endl;
+    cout << endl;
+
+    int input;
+    cout << "Enter your choice" << endl;
+    cin >> input;
+
+    InsertNode("shivPG", "Single", 62, 4000, 4, 10000, 'F');
+    InsertNode("ShriPG", "Double", 61, 3000, 2, 12000, 'M');
+    InsertNode("RajiPG", "Double", 98, 6000, 3, 11000, 'M');
+    InsertNode("FrfxPG", "Multi", 63, 3999, 2, 10000, 'N');
+    InsertNode("LisiPG", "Double", 71, 6000, 4, 11000, 'M');
+    InsertNode("GreenH", "Double", 44, 7000, 2, 11000, 'F');
+    InsertNode("Ashipg", "Triple", 80, 8000, 3, 11000, 'M');
+    InsertNode("AbcdPG", "Double", 93, 8000, 4, 16000, 'N');
+    InsertNode("VeraPG", "Double", 93, 5000, 3, 5000, 'F');
+    InsertNode("Mrinal", "Double", 82, 8500, 4, 8500, 'F');
+    InsertNode("StarPG", "Double", 82, 9000, 1, 11000, 'F');
+    InsertNode("miraPG", "Multi", 48, 10000, 3, 11000, 'F');
+    InsertNode("hyadPG", "Multi", 62, 13000, 3, 10000, 'N');
+    InsertNode("cityPG", "Multi", 62, 4000, 4, 10000, 'N');
+
+
+    system("cls");
+
+    if (input == 1)
+    {
+        display();
+        int n;
+        cout << "Press 1 to Back ";
+        cin >> n;
+        if (n == 1)
+        {
+            system("cls");
+            goto A;
+        }
+    }
+    else if (input == 2)
+    {
+        cout << "      Choose what you are searching for." << endl;
+        cout << endl;
+        cout << "1. Sector PG Search" << endl;
+        cout << "2. Name Search" << endl;
+        cout << endl;
+
+        int input2;
+        cout << "Enter your choice here" << endl;
+        cin >> input2;
+        system("cls");
+
+        if (input2 == 1)
+        {
+             B:
+            int input3;
+            cout << "Enter the sector you want to find a PG" << endl;
+            cin >> input3;
+            cout<<endl<<endl;
+            SearchSector(input3);
+            int num;
+            cout<<endl;
+            cout<<"Want to search back? Press 1"<<endl;
+            cout<<"Want to go back? Press 2"<<endl;
+            cin>>num;
+            if(num == 1){
+                system("cls");
+                goto B;
+            }
+            if(num==2)
+            {
+                system("cls");
+                goto A;
+
+            }
+            else
+            {
+                cout<<"Invalid option.Enter option again!"<<endl;
+                cin>>num;
+            }
+        }
+        else if (input2 == 2)
+        {
+            C:
+            string name;
+            cout << "Enter the name of the PG you are searching for - ";
+            cin >> name;
+
+            Trie t;
+            int x;
+            string *arr = new string[100];
+            int i = 0;
+            Node* temp = head;
+            while (temp != NULL) {
+                arr[i] = temp->name;
+                i++;
+                temp = temp->next;
+            }
+	        t.autoComplete(arr, name);
+	        cout<<endl<<endl;
+	        cout<<"Press 1 to go back."<<endl;
+	        int op;
+	        cout<<"Press 2 to search back."<<endl;
+	        cin>>op;
+            if(op == 1){
+                system("cls");
+                goto A;
+            }
+            if(op==2)
+            {
+                system("cls");
+                goto C;
+            }
+            else
+            {
+                cout<<"Please enter a valid option"<<endl;
+                cin>>op;
+            }
+
+        }
+        else
+        {
+            cout << "You have entered an invalid option" << endl;
+        }
+    }
+    else if (input == 3) {
+        int option;
+        cout<<"1. Price filter"<<endl;
+        cout<<"2. Rating filter"<<endl;
+        cout<<endl<<endl;
+        cout<<"Enter your choice"<<endl;
+        cin>>option;
+        if(option==1) {
+            system("cls");
+            cout<<"     Price wise filter!"<<endl;
+            cout<<endl<<endl<<endl;
+            int price;
+            cout<<"Enter price"<<endl;
+            cin>>price;
+            cout<<endl;
+            linear_Search(price);
+            int num6;
+            cout<<endl;
+            cout<<"Want to go back? Press 1"<<endl;
+            cin>>num6;
+            if(num6 == 1){
+                system("cls");
+                goto A;
+            }
+            else
+            {
+                cout<<"Please enter a valid option"<<endl;
+                cin>>num6;
+            }
+        }
+        else if (option==2) {
+            system("cls");
+            cout<<"     Rating wise filter!"<<endl;
+            cout<<endl<<endl<<endl;
+            int rating;
+            cout<<"Enter rating"<<endl;
+            cin>>rating;
+            cout<<endl;
+            linear_Search_rating(rating);
+            int num7;
+            cout<<endl;
+            cout<<"Want to go back? Press 1"<<endl;
+            cin>>num7;
+                if(num7 == 1) {
+                    system("cls");
+                    goto A;
+                }
+                else {
+                    cout<<"Please enter a valid option"<<endl;
+                    cin>>num7;
+                }        }
+
+        else {
+            cout<<"Invalid option.Enter option again!"<<endl;
+            cin>>option;
+            }
+        }
+else if (input==4)
+        {
+            exit(4);
+        }
+    else
+    {
+        cout << "Enter a valid option" << endl;
+        cin>>input;
+        system("cls");
+        goto A;
+    }
+    return 0;
+}
+
+
+
